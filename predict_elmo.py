@@ -163,5 +163,5 @@ if __name__ == '__main__':
     logger.info('======> input_file:{}'.format(os.path.basename(inout_file)))
     e = PretrainEmbedder('zhs.model/', 64)
     layer_index = -1
-    file2tfrecord('tf_record_{}_{}.pb'.format(layer_index, '_'.join(os.path.basename(inout_file).split('_')[:-1])), inout_file, e, layer_index=layer_index)
+    file2tfrecord('tf_record_{}_{}.pb'.format(layer_index, os.path.basename(inout_file).split('.')[0]), inout_file, e, layer_index=layer_index)
     '../pre-training/global_data/train_test_data/dq_amq_20181106_train_test.csv'

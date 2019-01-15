@@ -119,10 +119,11 @@ def pd_reader(file_dir, header: Union[int, type(None)] = 0, usecols: Union[list,
     return df
 
 
-def file2tfrecord(output_file: str, input_file: str, embedder: ElmoEmbedding, layer_index):
+def file2tfrecord(output_file: str, input_file: str, embedder: ElmoEmbedding, layer_index, msl=35):
     writer = tf.python_io.TFRecordWriter(output_file)
     train_df = pd_reader(input_file, usecols=[0, 1, 2])
     train_sentences = train_df.values[:, 2]
+    train_sentences = list(map(lambda x: x[:msl], train_sentences))
     train_label_str = train_df.values[:, 1]
     train_qids = train_df.values[:, 0]
     qid_labels, qid_sample_count, qid_sample_index, label_str_qid = label_str_qid_process(train_qids, train_label_str)

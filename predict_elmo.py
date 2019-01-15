@@ -132,7 +132,8 @@ def file2tfrecord(output_file: str, input_file: str, embedder: ElmoEmbedding, la
         batch_sentences, batch_label_str, batch_qids, batch_labels = batch[0], batch[1], batch[2], batch[3]
         datas = embedder.predict(batch_sentences, layer_index=layer_index)
         for i, data in enumerate(datas):
-            print(data.shape)
+            if i % 100 == 0:
+                print(data.shape)
             assert len(data.shape) == 2
             text = batch_sentences[i]
             label_str = batch_label_str[i]
@@ -159,6 +160,8 @@ class PretrainEmbedder(ElmoEmbedding):
 
 if __name__ == '__main__':
     inout_file = FLAGS.input_file
-    e = PretrainEmbedder('zhs.model/', 128)
+    logger.info('======> input_file:{}'.format(os.path.basename(inout_file)))
+    e = PretrainEmbedder('zhs.model/', 64)
     layer_index = -1
     file2tfrecord('tf_record_{}_{}.pb'.format(layer_index, '_'.join(os.path.basename(inout_file).split('_')[:2])), inout_file, e, layer_index=layer_index)
+    '../pre-training/global_data/train_test_data/dq_amq_20181106_train_test.csv'

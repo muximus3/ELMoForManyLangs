@@ -17,6 +17,9 @@ import pandas as pd
 import tensorflow as tf
 import collections
 import json
+import jieba
+import re
+from functools import partial
 
 sys.path.append(os.path.normpath('{}/'.format(os.path.dirname(os.path.abspath(__file__)))))
 logger = logging.getLogger(__name__)
@@ -119,15 +122,21 @@ def pd_reader(file_dir, header: Union[int, type(None)] = 0, usecols: Union[list,
     return df
 
 
+def sentence2token(sentence,msl):
+    sentence = jieba.cut_for_search(sentence)
+    tokens = [token for token in sentence if token.isalnum()]
+    return tokens[:msl]
+
 def file2tfrecord(output_file: str, input_file: str, embedder: ElmoEmbedding, layer_index, msl=35):
     writer = tf.python_io.TFRecordWriter(output_file)
     train_df = pd_reader(input_file, usecols=[0, 1, 2])
     train_sentences = train_df.values[:, 2]
-    train_sentences = list(map(lambda x: x[:msl], train_sentences))
+    train_sentences = list(map(partial(sentence2token, msl=msl), train_sentences))
     train_label_str = train_df.values[:, 1]
     train_qids = train_df.values[:, 0]
     qid_labels, qid_sample_count, qid_sample_index, label_str_qid = label_str_qid_process(train_qids, train_label_str)
     train_labels = [qid_labels[qid] for qid in train_qids]
+    assert len(train_sentences) == len(train_label_str) == len(train_qids) == len(train_labels)
     batch_gen = OldBatchGenMultiNoneInf([train_sentences, train_label_str, train_qids, train_labels], _batch_size=512)
     for batch in batch_gen:
         batch_sentences, batch_label_str, batch_qids, batch_labels = batch[0], batch[1], batch[2], batch[3]
@@ -165,4 +174,3 @@ if __name__ == '__main__':
     e = PretrainEmbedder('zhs.model/', 64)
     layer_index = -1
     file2tfrecord('tf_record_{}_{}.pb'.format(layer_index, os.path.basename(inout_file).split('.')[0]), inout_file, e, layer_index=layer_index)
-    '../pre-training/global_data/train_test_data/dq_amq_20181106_train_test.csv'

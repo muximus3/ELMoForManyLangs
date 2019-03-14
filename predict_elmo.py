@@ -150,8 +150,6 @@ def file2tfrecord(output_file: str, input_file: str, embedder: ElmoEmbedding, la
         batch_sentences, batch_qids, batch_labels = batch[0], batch[1], batch[2]
         datas = embedder.predict(batch_sentences, layer_index=layer_index)
         for i, data in enumerate(datas):
-            if i % 100 == 0:
-                print(data.shape)
             assert len(data.shape) == 2
             qid = batch_qids[i]
             label = batch_labels[i]

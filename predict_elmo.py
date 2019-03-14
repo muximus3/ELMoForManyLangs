@@ -145,7 +145,7 @@ def file2tfrecord(output_file: str, input_file: str, embedder: ElmoEmbedding, la
     train_qids = train_df.values[:, qid_axis]
     domain_label = train_df.values[:, domain_label_axis]
     assert len(train_sentences) == len(train_label_str) == len(train_qids)
-    batch_gen = OldBatchGenMultiNoneInf([train_sentences, train_qids, domain_label], _batch_size=512)
+    batch_gen = OldBatchGenMultiNoneInf([train_sentences, train_qids, domain_label], _batch_size=10000)
     for batch in batch_gen:
         batch_sentences, batch_qids, batch_labels = batch[0], batch[1], batch[2]
         datas = embedder.predict(batch_sentences, layer_index=layer_index)
@@ -175,6 +175,6 @@ class PretrainEmbedder(ElmoEmbedding):
 if __name__ == '__main__':
     inout_file = FLAGS.input_file
     logger.info('======> input_file:{}'.format(os.path.basename(inout_file)))
-    e = PretrainEmbedder('zhs.model/', 320)
+    e = PretrainEmbedder('zhs.model/', 400)
     layer_index = -1
     file2tfrecord('tf_record_{}_{}.pb'.format(layer_index, os.path.basename(inout_file).split('.')[0]), inout_file, e, layer_index=layer_index)

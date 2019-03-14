@@ -131,7 +131,7 @@ def token2ids(tokens, word_index: dict):
     return list(map(lambda token: word_index.get(token, 0), tokens))
 
 
-def file2tfrecord(output_file: str, input_file: str, embedder: ElmoEmbedding, layer_index, msl=35):
+def file2tfrecord(output_file: str, input_file: str, embedder: ElmoEmbedding, layer_index, msl=20):
     writer = tf.python_io.TFRecordWriter(output_file)
     train_df = pd_reader(input_file)
     data_axis = 1

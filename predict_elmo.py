@@ -134,10 +134,10 @@ def token2ids(tokens, word_index: dict):
 def file2tfrecord(output_file: str, input_file: str, embedder: ElmoEmbedding, layer_index, msl=35):
     writer = tf.python_io.TFRecordWriter(output_file)
     train_df = pd_reader(input_file)
-    data_axis = 1
-    qid_axis = 3
-    label_str_axis = 0
-    domain_label_axis = 5
+    domain_label_axis = 1
+    label_str_axis = 2
+    data_axis = 3
+    qid_axis = 5
     train_sentences = train_df.values[:, data_axis]
     # must split into token list!!!!!!!
     train_sentences = list(map(partial(sentence2token, msl=msl), train_sentences))

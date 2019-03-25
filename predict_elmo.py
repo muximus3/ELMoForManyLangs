@@ -137,7 +137,7 @@ def file2tfrecord(output_file: str, input_file: str, embedder: ElmoEmbedding, la
     domain_label_axis = 1
     label_str_axis = 2
     data_axis = 3
-    qid_axis = 5
+    qid_axis = 4
     train_sentences = train_df.values[:, data_axis]
     # must split into token list!!!!!!!
     train_sentences = list(map(partial(sentence2token, msl=msl), train_sentences))
